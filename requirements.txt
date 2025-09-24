@@ -5,3 +5,4 @@ dnspython
 shodan
 beautifulsoup4
 lxml
+python-dotenv
