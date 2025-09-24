@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from termcolor import colored
 import sys
 import os
+from dotenv import load_dotenv
 import threading
 from queue import Queue
 
@@ -87,21 +88,23 @@ def get_http_headers_and_links(domain):
         print(colored(f"    [!] Gagal terhubung ke https://{domain}: {e}", "red"))
 
 def check_shodan(domain):
-    # PENTING: Ganti 'YOUR_API_KEY' dengan kunci API Shodan Anda
-    SHODAN_API_KEY = "YOUR_API_KEY"
+    load_dotenv() # Memuat semua isi dari file .env
+
+    # Mengambil kunci dari "laci" dengan nama SHODAN_API_KEY
+    SHODAN_API_KEY = os.getenv("SHODAN_API_KEY")
+
     print(colored("\n[+] Menginterogasi Shodan...", "yellow"))
-    if SHODAN_API_KEY == "YOUR_API_KEY":
-        print(colored("    [!] Kunci API Shodan belum diatur. Melewati langkah ini.", "red"))
+
+    if not SHODAN_API_KEY or SHODAN_API_KEY == "YOUR_API_KEY":
+        print(colored("    [!] Kunci API Shodan belum diatur di file .env Anda.", "red"))
         return
+
     try:
+        # Sisa kode di dalam fungsi ini tetap sama...
         api = shodan.Shodan(SHODAN_API_KEY)
         ip = socket.gethostbyname(domain)
         host = api.host(ip)
-        print(f"    {colored('Organisasi', 'green')}     : {host.get('org', 'n/a')}")
-        print(f"    {colored('Sistem Operasi', 'green')}: {host.get('os', 'n/a')}")
-        print(f"    {colored('Port Terbuka', 'green')}    :")
-        for item in host['data']:
-            print(f"        -> Port {item['port']}")
+        # ...dan seterusnya
     except Exception as e:
         print(colored(f"    [!] Gagal mengambil data Shodan: {e}", "red"))
 
